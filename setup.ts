@@ -22,8 +22,7 @@ async function welcome(): Promise<Answers> {
     console.log(`${chalk.bgBlueBright("                          ")}\n`);
 
     console.log(`${chalk.bold("Private Encrypted Cloud")}  -  Keep control over your data\n`);
-    console.log("You are entering scripts mode.");
-    console.log("Please ensure that the API is online and in scripts mode.\n");
+    console.log("You are entering setup mode.");
 
     const response = await inquirer.prompt({
         name: "continue",
