@@ -42,6 +42,11 @@ interface InstanceConfiguration {
     instancePrivateKey: string;
     instancePublicKeySignature: string;
     apiUrl: string;
+    clientUrl: string;
+    mysqlUriPrompt: string;
+    port: number;
+    sessionExpireTimer: number;
+    tmpFileExpire: number;
 }
 
 async function configureInstance(): Promise<InstanceConfiguration> {
@@ -61,16 +66,48 @@ async function configureInstance(): Promise<InstanceConfiguration> {
     ];
     const instancePublicKeySignature = rsaSign(privateKey, publicKey);
 
-    // API URL prompt
-    const apiUrlPrompt = await inquirer.prompt({
+    const instance = await inquirer.prompt([{
         name: "apiUrl",
         type: "input",
-        message: "Please enter the API URL",
+        message: "API URL",
         validate: (input: string) => input.length > 0
-    });
+    }, {
+        name: "clientUrl",
+        type: "input",
+        message: "Client URL",
+        validate: (input: string) => input.length > 0
+    }, {
+        name: "mysqlUri",
+        type: "input",
+        message: "MySQL URI",
+        validate: (input: string) => input.length > 0
+    }, {
+        name: "port",
+        type: "input",
+        message: "API port",
+        default: 3001,
+        validate: (input: any) => typeof input === "number"
+    }, {
+        name: "sessionExpireTimer",
+        type: "input",
+        message: "Session max idle time (in seconds)",
+        default: 1800,
+        validate: (input: any) => typeof input === "number"
+    }, {
+        name: "tmpFileExpire",
+        type: "input",
+        message: "Temporary file expiration delay (in seconds)",
+        default: 30,
+        validate: (input: any) => typeof input === "number"
+    }]);
 
     return {
-        apiUrl: apiUrlPrompt.apiUrl,
+        apiUrl: instance.apiUrl,
+        clientUrl: instance.clientUrl,
+        mysqlUriPrompt: instance.mysqlUri,
+        port: instance.port,
+        sessionExpireTimer: instance.sessionExpireTimer,
+        tmpFileExpire: instance.tmpFileExpire,
         instanceId: instanceId,
         instancePrivateKey: privateKey,
         instancePublicKey: publicKey,
